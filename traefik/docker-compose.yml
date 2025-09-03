@@ -1,0 +1,48 @@
+---
+
+services:
+  traefik:
+    image: traefik:latest # Use the latest Traefik image
+    container_name: traefik # Name of the container
+    restart: unless-stopped # Ensures the container restarts if it stops unexpectedly
+    security_opt:
+      - no-new-privileges:true # Prevents the container from gaining additional privileges
+    networks:
+       proxy: # Connects to the predefined external network named 'proxy'
+    ports:
+      - 80:80 # HTTP port
+      - 443:443 # HTTPS port
+    environment:
+      - CF_API_EMAIL=gerassevihc.iv@gmail.com # Cloudflare account email for API access
+      - CF_DNS_API_TOKEN=-68VWza2wVrmKsy0mtT23l9lUC8gZP4ODdBgLVJc # Cloudflare DNS API token
+      # - CF_API_KEY=YOU_API_KEY
+      # - VULTR_API_KEY=YOU_API_KEY
+    volumes:
+      - /etc/localtime:/etc/localtime:ro # Sync time with the host
+      - /var/run/docker.sock:/var/run/docker.sock:ro # Allows Traefik to interact with Docker
+      - ./traefik.yaml:/traefik.yaml:ro # Traefik configuration file
+      - ./acme.json:/acme.json # SSL certificate file
+      - ./config.yaml:/config.yaml:ro # Additional configuration file
+      - /home/user/docker/traefik/logs:/var/log/traefik # Log directory 
+    labels: 
+      - "traefik.enable=true" # Enable Traefik on this service
+      - "traefik.http.routers.traefik.entrypoints=http" # Define HTTP entrypoint
+      - "traefik.http.routers.traefik.rule=Host(`traefik-dashboard.deltafeniks.kz`)" # Host rule for routing
+      - "traefik.http.middlewares.traefik-auth.basicauth.users=admin:$$2b$$12$$Rzr9.I.9C0HS/DECaCEkW.ItGIDnunhjmGEfjUWnY2t7wbzjMvl8W" # Basic auth for security traefik for username/pass
+      - "traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https" # Redirect HTTP to HTTPS
+      # - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https" # Set forwarded headers for SSL
+      - "traefik.http.routers.traefik.middlewares=traefik-https-redirect" # Apply HTTPS redirect middleware
+      - "traefik.http.routers.traefik-secure.entrypoints=https" # Secure entrypoint for HTTPS
+      - "traefik.http.routers.traefik-secure.rule=Host(`traefik-dashboard.deltafeniks.kz`)"  # Host rule for secure routing
+      - "traefik.http.routers.traefik-secure.middlewares=traefik-auth" # Apply authentication middleware
+      - "traefik.http.routers.traefik-secure.tls=true" # Enable TLS for secure connection
+      - "traefik.http.routers.traefik-secure.tls.certresolver=cloudflare" # Use Cloudflare for SSL certificate resolution
+      # - "traefik.http.routers.traefik-secure.tls.certresolver=vultr"
+      - "traefik.http.routers.traefik-secure.tls.domains[0].main=deltafeniks.kz" # Main domain for SSL certificate
+      - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.deltafeniks.kz" # SANs for SSL certificate
+      - "traefik.http.routers.traefik-secure.service=api@internal" # Internal service for Traefik API
+
+networks:
+  proxy:
+    name: proxy # Specifies the external network to connect to
+    external: true # Indicates that the network is external
