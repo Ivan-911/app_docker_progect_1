@@ -1,1 +1,10 @@
 *.log
+cerbot/
+.vscode/
+compose.yml
+.env
+mytoken.txt
+sets/
+Dockerfile
+.gitignore
+.dockerignore
