@@ -14,6 +14,9 @@ services:
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
+      - CLIENT_ID=${CLIENT_ID}
+    secrets:
+      - secret_id
 
     depends_on:
       - db
@@ -55,6 +58,10 @@ services:
     restart: always  
     depends_on:
       - app
+
+secrets:
+  secret_id:
+    file: ./sets/temp_app.txt
 
 
 volumes:
