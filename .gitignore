@@ -3,4 +3,4 @@ cerbot/
 compose.yml
 .env
 mytoken.txt
-dev/bert_model_final_v2.pth
+sets/
