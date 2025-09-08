@@ -221,9 +221,21 @@ logger = logging.getLogger(__name__)
 
 
 CLIENT_ID = os.getenv("CLIENT_ID", "local.684ef2bc59c7f8.87517346")
-CLIENT_SECRET = os.getenv("CLIENT_SECRET", "9CWQgq7Da4i46gI5qZkntOKfGX8gT2WwgJFQgF770NX22O4qno")
+#CLIENT_SECRET = os.getenv("CLIENT_SECRET", "9CWQgq7Da4i46gI5qZkntOKfGX8gT2WwgJFQgF770NX22O4qno")
 
+def red_secret(secret_name):
+    try:
+        with open(secret_name, 'r') as file:
+            secret = file.read().strip()
+            return secret
+    except FileNotFoundError:
+        logger.error(f"File not found: {secret_name}")
+        return None
+    except Exception as e:
+        logger.error(f"Error reading {secret_name}: {e}")
+        return None
 
+CLIENT_SECRET = red_secret('secret_id')
 # Подумать над state нужна связка когда вызывать будет для токена от кого запрос
 
 @app.get("/authorize")
