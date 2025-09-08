@@ -141,7 +141,7 @@ class UserRequests(Base):
     request_id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey('users.user_id'), nullable=False)
     visitor = Column(String(255), nullable=True)  # как в схеме
-    raw_message = Column(Text, nullable=False)
+    raw_message = Column(Text, nullable=True, default=None)
 
     # связи
     user = relationship("Users", back_populates="requests")
