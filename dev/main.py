@@ -205,7 +205,7 @@ def get_db():
     finally:
         db.close()
 
-path_to_file = os.path.dirname(os.path.abspath(__file__)) + '/fastapi.log'
+path_to_file = os.path.dirname(os.path.abspath(__file__)) + '/loger/fastapi.log'
 
 
 logging.basicConfig(
