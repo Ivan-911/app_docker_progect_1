@@ -19,7 +19,7 @@ services:
       - secret_id
 
     volumes:
-      - ./log:/usr/src/app/fastapi.log 
+      - ./fastapi.log:/usr/src/app/fastapi.log
 
     depends_on:
       - db
