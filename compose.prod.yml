@@ -18,6 +18,9 @@ services:
     secrets:
       - secret_id
 
+    volumes:
+      - ./log:/usr/src/app/fastapi.log 
+
     depends_on:
       - db
     networks:
