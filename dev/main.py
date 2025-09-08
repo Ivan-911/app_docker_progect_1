@@ -375,9 +375,16 @@ async def bot_event_handler(request: Request, db: Session = Depends(get_db)):
     db.add(auth_token)
     db.commit()
     db.refresh(auth_token)
+
+    # добавляю значение на пустой запрос
+    raw_message = event_data.get('data[PARAMS][MESSAGE]')
+
+    if not raw_message:
+        logger.warning(f"Empty message received from Bitrix event: {event_data}")
+        return {"error": "Empty message", "event": event_data}
     user_request = UserRequests(
         user_id=user_check.user_id,
-        raw_message=event_data.get('data[PARAMS][MESSAGE]'),
+        raw_message=raw_message,
     )
     db.add(user_request)
     db.commit()
